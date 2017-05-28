@@ -13,7 +13,7 @@ namespace :olx do
     results = []
 
     last_flats.each do |flat|
-      flat_title = flat.css("a").first.text
+      flat_title = flat.css("a strong").first.text
       flat_link = flat.css("a").first["href"]
       break if flat_title == last_flat_olx.title
       results << { title: flat_title, link: flat_link }
@@ -21,10 +21,25 @@ namespace :olx do
 
     last_flat_olx.update_attributes(title: results.first[:title]) if results.any?
 
-    puts results
+    results.each do |result|
+      send_to_robert(result)
+    end
   end
 end
 
 def last_flat_olx
   @last_flat_olx ||= LastFlat.olx
+end
+
+def send_to_robert(result)
+  Messenger::Client.send(
+    Messenger::Request.new(
+      Messenger::Elements::Text.new(text: make_result_text(result)),
+      "robert.kostrzewski"
+    )
+  )
+end
+
+def make_result_text(result)
+  "#{result[:title]} : #{result[:link]}"
 end
