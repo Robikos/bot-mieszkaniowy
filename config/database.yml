@@ -7,6 +7,7 @@ default: &default
 
 development:
   <<: *default
+  host: localhost
   database: bot_mieszkaniowy_development
 
 # Warning: The database defined as "test" will be erased and
