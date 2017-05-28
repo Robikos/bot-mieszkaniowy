@@ -1,5 +1,5 @@
 require "httparty"
-require "Nokogiri"
+require "nokogiri"
 
 namespace :olx do
   desc "Scan OLX and check new flats"
