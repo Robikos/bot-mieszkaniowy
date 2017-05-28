@@ -27,8 +27,39 @@ namespace :olx do
   end
 end
 
+namespace :trojmiasto do
+  desc "Scan TrojmiastoPL and check new flats"
+  task scan: :environment do
+    url = ENV["TROJMIASTO_URL"] || Rails.application.secrets[:trojmiasto_url]
+    page = HTTParty.get(url)
+    parsed_page = Nokogiri::HTML(page)
+
+    last_flats = parsed_page.css(".list-elem")
+
+    results = []
+
+    last_flats.each do |flat|
+      elem = flat.css("a").first
+      flat_title = elem.text
+      flat_link = elem["href"]
+      break if flat_title == last_flat_trojmiasto.title
+      results << { title: flat_title, link: flat_link }
+    end
+
+    last_flat_trojmiasto.update_attributes(title: results.first[:title]) if results.any?
+
+    results.each do |result|
+      send_to_facebook(result)
+    end
+  end
+end
+
 def last_flat_olx
   @last_flat_olx ||= LastFlat.olx
+end
+
+def last_flat_trojmiasto
+  @last_flat_trojmiasto ||= LastFlat.trojmiasto
 end
 
 def send_to_facebook(result)
