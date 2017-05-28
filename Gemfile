@@ -37,10 +37,12 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'nokogiri'
 gem 'httparty'
+gem 'messenger-ruby'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
+  gem 'pry-rails'
 end
 
 group :development do
